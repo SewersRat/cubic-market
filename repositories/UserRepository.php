@@ -18,18 +18,10 @@ class UserRepository {
         ]);
     }
 
-    public function findByEmail(string $email): ?User {
+    public function findByEmail(string $email): ?array {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute(['email' => $email]);
-        $data = $stmt->fetch();
-
-        if (!$data) return null;
-
-        if ($data['role'] === 'ROLE_ADMIN') {
-            return new Admin($data['id'], $data['pseudo'], $data['email']);
-        }
-
-        return new User($data['id'], $data['pseudo'], $data['email']);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 }
 
